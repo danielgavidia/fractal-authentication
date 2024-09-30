@@ -1,10 +1,10 @@
-import { password } from "bun";
 import express from "express";
 
 // Express setup
 const app = express();
 const port = 3000;
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
 app.use(cors());
 app.use(express.json());
@@ -20,9 +20,9 @@ app.get("/", (req, res) => {
 
 // 'DB'
 let data = [
-    { username: "daniel", password: "password_01" },
-    { username: "jimmy", password: "password_02" },
-    { username: "sandy", password: "password_03" },
+    { id: 1, username: "daniel", password: "password_01" },
+    { id: 2, username: "jimmy", password: "password_02" },
+    { id: 3, username: "sandy", password: "password_03" },
 ];
 
 // route - login (get JWT token)
@@ -42,8 +42,21 @@ app.post("/login/", (req, res) => {
             res.status(400).send({ error: "Wrong password" });
         }
 
+        // get user id
+        const userId = userObj?.id;
+
+        // create JWT using username, password, and KEY_JWT_COOKIES
+        const token = jwt.sign(
+            {
+                userId: userId,
+                password: password,
+            },
+            "test",
+            { expiresIn: "1hr" }
+        );
+
         // res
-        res.status(200).send({ username: username, password: password });
+        res.status(200).send({ userId: userId, token: token });
     } catch (error) {
         res.status(400).send({ error: error });
     }
