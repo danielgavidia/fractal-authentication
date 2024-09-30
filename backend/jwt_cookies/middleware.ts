@@ -2,7 +2,7 @@ import { verify } from "jsonwebtoken";
 import type { RequestHandler } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 
-// export const KEY = process.env.AUTH
+export const key = process.env.KEY_JWT_COOKIES || "KEY_FALLBACK";
 
 export const authenticate: RequestHandler = async (req, res, next) => {
     try {
@@ -16,7 +16,7 @@ export const authenticate: RequestHandler = async (req, res, next) => {
         }
 
         // Decode token and transform into decoded object (AI helped with type issue)
-        const decoded = verify(token, "test");
+        const decoded = verify(token, key);
         let userId: string | undefined;
 
         // Check if decoded is a JwtPayload (AI helped with type issue)
@@ -32,6 +32,6 @@ export const authenticate: RequestHandler = async (req, res, next) => {
         // Next
         next();
     } catch (error) {
-        res.send(400).json({ error: error });
+        res.status(400).json({ error: error });
     }
 };

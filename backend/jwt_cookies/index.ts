@@ -27,9 +27,6 @@ let data = [
     { userId: "3", username: "sandy", password: "password_03" },
 ];
 
-// key
-const key = process.env.KEY_JWT_COOKIES;
-
 // route - login (get JWT token)
 app.post("/login/", (req, res) => {
     try {
@@ -51,13 +48,12 @@ app.post("/login/", (req, res) => {
         const userId = userObj?.userId;
 
         // generate JWT using username, password, and KEY_JWT_COOKIES
-        console.log(key);
         const token = jwt.sign(
             {
                 userId: userId,
                 password: password,
             },
-            "test",
+            process.env.KEY_JWT_COOKIES,
             { expiresIn: "1hr" }
         );
 
@@ -95,7 +91,7 @@ app.post("/signup/", (req, res) => {
                 userId: newUser.userId,
                 password: password,
             },
-            "test",
+            process.env.KEY_JWT_COOKIES,
             { expiresIn: "1hr" }
         );
 
