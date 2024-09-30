@@ -4,10 +4,12 @@ import type { JwtPayload } from "jsonwebtoken";
 
 export const key = process.env.KEY_JWT_COOKIES || "KEY_FALLBACK";
 
+// headers: {"Authorization": "Bearer <token>""}
 export const authenticate: RequestHandler = async (req, res, next) => {
     try {
         // Get auth token
         const token = req.headers.authorization?.split(" ")[1];
+        console.log(token);
 
         // If token does not exist, return error
         if (!token) {

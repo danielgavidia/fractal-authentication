@@ -22,9 +22,27 @@ app.get("/", (req, res) => {
 
 // 'DB'
 let data = [
-    { userId: "1", username: "daniel", password: "password_01" },
-    { userId: "2", username: "jimmy", password: "password_02" },
-    { userId: "3", username: "sandy", password: "password_03" },
+    {
+        userId: "1",
+        username: "daniel",
+        password: "password_01",
+        email: "daniel@gmail.com",
+        address: "123 Daniel St.",
+    },
+    {
+        userId: "2",
+        username: "jimmy",
+        password: "password_02",
+        email: "jimmy@gmail.com",
+        address: "123 Jimmy St.",
+    },
+    {
+        userId: "3",
+        username: "sandy",
+        password: "password_03",
+        email: "sandy@gmail.com",
+        address: "123 Sandy St.",
+    },
 ];
 
 // route - login (get JWT token)
@@ -67,7 +85,7 @@ app.post("/login/", (req, res) => {
 // route - sign up
 app.post("/signup/", (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, email, address } = req.body;
 
         // check if username already exists
         const usernameCheck = data.map((x) => x.username).includes(username, 0);
@@ -79,6 +97,8 @@ app.post("/signup/", (req, res) => {
             userId: uuidv4(),
             username: username,
             password: password,
+            email: email,
+            address: address,
         };
 
         // send new user Object to data Object
@@ -109,7 +129,22 @@ app.get("/authenticated/", authenticate, (req, res) => {
         const username = data.find((x) => x.userId === userId)?.username;
         // res
         res.status(200).send(`${username} is authenticated`);
-        // res.status(200).send();
+    } catch (error) {
+        res.status(400).send({ error: error });
+    }
+});
+
+// route - get user data
+app.get("/user/", authenticate, (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const userObj = data.find((x) => x.userId === userId);
+        // res
+        res.status(200).send({
+            username: userObj?.username,
+            email: userObj?.email,
+            address: userObj?.address,
+        });
     } catch (error) {
         res.status(400).send({ error: error });
     }

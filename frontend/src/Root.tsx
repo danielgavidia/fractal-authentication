@@ -3,7 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 const Root = () => {
     return (
         <div>
-            <div className="navbar">
+            <div className="navbar p-4">
                 <Link to="/home" className="flex-1">
                     Fractal Auth
                 </Link>
