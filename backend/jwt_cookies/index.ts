@@ -1,4 +1,5 @@
 import express from "express";
+import { authenticate } from "./middleware";
 
 // Express setup
 const app = express();
@@ -20,9 +21,9 @@ app.get("/", (req, res) => {
 
 // 'DB'
 let data = [
-    { id: 1, username: "daniel", password: "password_01" },
-    { id: 2, username: "jimmy", password: "password_02" },
-    { id: 3, username: "sandy", password: "password_03" },
+    { userId: 1, username: "daniel", password: "password_01" },
+    { userId: 2, username: "jimmy", password: "password_02" },
+    { userId: 3, username: "sandy", password: "password_03" },
 ];
 
 // route - login (get JWT token)
@@ -43,7 +44,7 @@ app.post("/login/", (req, res) => {
         }
 
         // get user id
-        const userId = userObj?.id;
+        const userId = userObj?.userId;
 
         // create JWT using username, password, and KEY_JWT_COOKIES
         const token = jwt.sign(
@@ -56,7 +57,20 @@ app.post("/login/", (req, res) => {
         );
 
         // res
-        res.status(200).send({ userId: userId, token: token });
+        res.status(200).send({ token: token });
+    } catch (error) {
+        res.status(400).send({ error: error });
+    }
+});
+
+// route - authorization
+app.get("/authenticated", authenticate, (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const username = data.find((x) => x.userId === userId)?.username;
+        // res
+        res.status(200).send(`${username} is authenticated`);
+        // res.status(200).send();
     } catch (error) {
         res.status(400).send({ error: error });
     }
