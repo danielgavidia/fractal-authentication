@@ -1,5 +1,6 @@
 import express from "express";
 import { authenticate } from "./middleware";
+import { v4 as uuidv4 } from "uuid";
 
 // Express setup
 const app = express();
@@ -21,10 +22,13 @@ app.get("/", (req, res) => {
 
 // 'DB'
 let data = [
-    { userId: 1, username: "daniel", password: "password_01" },
-    { userId: 2, username: "jimmy", password: "password_02" },
-    { userId: 3, username: "sandy", password: "password_03" },
+    { userId: "1", username: "daniel", password: "password_01" },
+    { userId: "2", username: "jimmy", password: "password_02" },
+    { userId: "3", username: "sandy", password: "password_03" },
 ];
+
+// key
+const key = process.env.KEY_JWT_COOKIES;
 
 // route - login (get JWT token)
 app.post("/login/", (req, res) => {
@@ -46,7 +50,8 @@ app.post("/login/", (req, res) => {
         // get user id
         const userId = userObj?.userId;
 
-        // create JWT using username, password, and KEY_JWT_COOKIES
+        // generate JWT using username, password, and KEY_JWT_COOKIES
+        console.log(key);
         const token = jwt.sign(
             {
                 userId: userId,
@@ -63,8 +68,46 @@ app.post("/login/", (req, res) => {
     }
 });
 
+// route - sign up
+app.post("/signup/", (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // check if username already exists
+        const usernameCheck = data.map((x) => x.username).includes(username, 0);
+        if (usernameCheck) {
+            res.status(400).send({ error: "Username already exists" });
+        }
+        // generate userId
+        const newUser = {
+            userId: uuidv4(),
+            username: username,
+            password: password,
+        };
+
+        // send new user Object to data Object
+        data.push(newUser);
+        console.log(data);
+
+        // generate JWT using username, password, and KEY_JWT_COOKIES
+        const token = jwt.sign(
+            {
+                userId: newUser.userId,
+                password: password,
+            },
+            "test",
+            { expiresIn: "1hr" }
+        );
+
+        // res
+        res.status(200).send({ token: token });
+    } catch (error) {
+        res.status(400).send({ error: error });
+    }
+});
+
 // route - authorization
-app.get("/authenticated", authenticate, (req, res) => {
+app.get("/authenticated/", authenticate, (req, res) => {
     try {
         const userId = req.body.userId;
         const username = data.find((x) => x.userId === userId)?.username;
@@ -75,5 +118,3 @@ app.get("/authenticated", authenticate, (req, res) => {
         res.status(400).send({ error: error });
     }
 });
-
-// route - sign up
