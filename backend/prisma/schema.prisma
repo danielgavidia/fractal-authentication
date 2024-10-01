@@ -21,8 +21,8 @@ model User {
     updatedAt DateTime @updatedAt
 
     // fields
-    clerkId String @default("")
-    email   String @default("")
+    firebaseId String @default("")
+    email      String @default("")
 
     // relationships
 }
