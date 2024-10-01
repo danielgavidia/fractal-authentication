@@ -26,7 +26,7 @@ app.post("/authenticate", verifyFirebaseToken, (req, res) => {
 
 // log in
 app.post("/login", verifyFirebaseToken, async (req, res) => {
-    const firebaseId = req.body.firebaseId;
+    const { firebaseId, email } = req.body;
     const user = await prisma.user.findUnique({
         where: {
             firebaseId: firebaseId,
@@ -36,6 +36,7 @@ app.post("/login", verifyFirebaseToken, async (req, res) => {
         const userNew = await prisma.user.create({
             data: {
                 firebaseId: firebaseId,
+                email: email,
             },
         });
         res.status(200).json(userNew);
@@ -44,3 +45,14 @@ app.post("/login", verifyFirebaseToken, async (req, res) => {
 });
 
 // sign up
+app.post("/signup", verifyFirebaseToken, async (req, res) => {
+    const { firebaseId, email } = req.body;
+    const user = {
+        firebaseId: firebaseId,
+        email: email,
+    };
+    const userNew = await prisma.user.create({
+        data: user,
+    });
+    res.status(200).json(userNew);
+});

@@ -16,8 +16,10 @@ export const verifyFirebaseToken: RequestHandler = async (req, res, next) => {
     try {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
         const firebaseId = decodedToken.uid;
+        const email = decodedToken.email;
         req.body = {
             firebaseId: firebaseId,
+            email: email,
         };
         next();
     } catch (error) {

@@ -1,10 +1,9 @@
 import { useState } from "react";
-// import axios from "axios";
+import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"
 
-// const BASE_URL = "http://localhost:3000";
 
 const RouteSignup = () => {
     const [email, setEmail] = useState<string>("");
@@ -16,8 +15,18 @@ const RouteSignup = () => {
         e.preventDefault()
         try {
             const userCrendential = await createUserWithEmailAndPassword(auth, email, password)
-            console.log("User signed up: ", userCrendential.user)
-            console.log("userIdToken: ", userCrendential.user.getIdToken())
+            const token = await userCrendential.user.getIdToken()
+            const res = await axios({
+                method: "POST",
+                url: `${import.meta.env.VITE_EXPRESS_BASE_URL}/signup`,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            console.log("success")
+            console.log(res)
+            setEmail("")
+            setPassword("")
         } catch (error: any) {
             setError(error.message)
         }
