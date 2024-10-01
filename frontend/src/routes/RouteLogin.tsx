@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"
 
@@ -9,24 +9,23 @@ const RouteLogin = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null)
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleFirebaseSignIn = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
-            const token = await userCredential.user.getIdToken()
+            const idToken = await userCredential.user.getIdToken()
             const res = await axios({
                 method: "POST",
                 url: `${import.meta.env.VITE_EXPRESS_BASE_URL}/login`,
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${idToken}`
                 }
             })
             setEmail("")
             setPassword("")
-            console.log("success")
-            console.log(res)
+            navigate("/app", { state: { idToken: res.data.idToken } })
         } catch (error: any) {
             setError(error.message)
         }
