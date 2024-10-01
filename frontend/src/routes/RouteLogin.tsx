@@ -1,37 +1,44 @@
 import { useState } from "react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig"
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-// const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:3000";
 
 const RouteLogin = () => {
-    const [email, setEmail] = useState<string>("");
+    const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [error, setError] = useState<string | null>(null)
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
-    const handleFirebaseSignIn = async (e: React.FormEvent) => {
-        e.preventDefault()
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password)
-            console.log("User signed in: ", userCredential.user)
-        } catch (error: any) {
-            setError(error.message)
+            e.preventDefault();
+            setUsername("");
+            setPassword("");
+            const res = await axios({
+                method: "POST",
+                url: `${BASE_URL}/login/`,
+                data: {
+                    username: username,
+                    password: password,
+                },
+            });
+            navigate("/app", { state: { token: res.data.token } });
+            console.log("Submission success");
+        } catch (error) {
+            console.log(`Error: ${error}`);
         }
-    }
+    };
 
     return (
         <div id="RouteLogin" className="bg-neutral h-screen p-4">
             <div>
-                <form className="flex-row" onSubmit={handleFirebaseSignIn}>
+                <form className="flex-row" onSubmit={handleSubmit}>
                     <div className="mb-2 ">
                         <input
                             type="text"
-                            value={email}
-                            placeholder="email"
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={username}
+                            placeholder="username"
+                            onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
                     <div className="mb-2 ">
@@ -45,7 +52,6 @@ const RouteLogin = () => {
                     <div className="btn mb-2">
                         <button>Login</button>
                     </div>
-                    {error && <p>{error}</p>}
                 </form>
             </div>
         </div>
