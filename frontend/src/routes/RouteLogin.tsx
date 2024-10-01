@@ -4,7 +4,6 @@ import axios from "axios";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"
 
-// const BASE_URL = "http://localhost:3000";
 
 const RouteLogin = () => {
     const [email, setEmail] = useState<string>("");
@@ -17,15 +16,15 @@ const RouteLogin = () => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
             const token = await userCredential.user.getIdToken()
-            console.log(token)
             const res = await axios({
                 method: "POST",
-                url: "http://localhost:4000/login",
+                url: `${import.meta.env.VITE_EXPRESS_BASE_URL}/login`,
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            // console.log("User signed in: ", userCredential.user)
+            setEmail("")
+            setPassword("")
             console.log("success")
             console.log(res)
         } catch (error: any) {
