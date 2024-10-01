@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"
 
@@ -9,7 +9,7 @@ const RouteSignup = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null)
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleFirebaseSignUp = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -23,10 +23,9 @@ const RouteSignup = () => {
                     Authorization: `Bearer ${token}`
                 }
             })
-            console.log("success")
-            console.log(res)
             setEmail("")
             setPassword("")
+            navigate("/app/home", { state: { idToken: res.data.idToken } })
         } catch (error: any) {
             setError(error.message)
         }
