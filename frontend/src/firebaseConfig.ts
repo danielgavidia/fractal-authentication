@@ -7,13 +7,13 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyBlZwZftncrO8jqJiikNp3wqcPXs4Si1eE",
-    authDomain: "fractal-authentication.firebaseapp.com",
-    projectId: "fractal-authentication",
-    storageBucket: "fractal-authentication.appspot.com",
-    messagingSenderId: "545171661297",
-    appId: "1:545171661297:web:5c19c6a8a9f2ee8c3ee450",
-    measurementId: "G-PFDSZQMMZQ",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
