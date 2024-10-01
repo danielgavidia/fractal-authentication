@@ -59,13 +59,15 @@ app.post("/signup", verifyFirebaseToken, async (req, res) => {
 
 // get users
 app.post("/user", verifyFirebaseToken, async (req, res) => {
-    const { firebaseId } = req.body;
+    const { idToken, firebaseId } = req.body;
+    console.log(idToken);
     const user = await prisma.user.findUnique({
         where: {
             firebaseId: firebaseId,
         },
     });
     const userData = {
+        idToken: idToken,
         email: user?.email,
     };
     res.status(200).json(userData);

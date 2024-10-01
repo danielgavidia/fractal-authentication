@@ -20,17 +20,17 @@ const Root = () => {
                 </Link>
                 {user ? (
                     <>
-                        <Link to="/home" className="btn ml-2">
+                        <Link to="/app/home" className="btn ml-2">
                             Home
                         </Link>
                         <button onClick={handleSignOut} className="btn ml-2">Sign Out</button>
                     </>
                 ) : (
                     <>
-                        <Link to="/login" className="btn ml-2">
+                        <Link to="/home/login" className="btn ml-2">
                             Login
                         </Link>
-                        <Link to="/signup" className="btn ml-2">
+                        <Link to="/home/signup" className="btn ml-2">
                             Signup
                         </Link>
                     </>
