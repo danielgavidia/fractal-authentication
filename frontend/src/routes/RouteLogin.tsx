@@ -25,7 +25,7 @@ const RouteLogin = () => {
             })
             setEmail("")
             setPassword("")
-            navigate("/app", { state: { idToken: res.data.idToken } })
+            navigate("/app/home", { state: { idToken: res.data.idToken } })
         } catch (error: any) {
             setError(error.message)
         }

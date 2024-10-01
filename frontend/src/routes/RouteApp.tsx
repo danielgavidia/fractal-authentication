@@ -13,7 +13,6 @@ const RouteApp = () => {
     }, []);
 
     const getUserData = async () => {
-        console.log(`App page token: ${token}`)
         const res = await axios({
             method: "POST",
             url: `${import.meta.env.VITE_EXPRESS_BASE_URL}/user`,
