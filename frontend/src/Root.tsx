@@ -1,10 +1,11 @@
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 const Root = () => {
     return (
         <div>
             <div className="navbar p-4">
-                <Link to="/home" className="flex-1">
+                {/* <Link to="/home" className="flex-1">
                     Fractal Auth
                 </Link>
                 <Link to="/home" className="btn ml-2">
@@ -15,7 +16,13 @@ const Root = () => {
                 </Link>
                 <Link to="/signup" className="btn ml-2">
                     Signup
-                </Link>
+                </Link> */}
+                <SignedOut>
+                    <SignInButton />
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
             </div>
             <Outlet />
         </div>
