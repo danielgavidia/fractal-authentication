@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"
 
-// const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:3000";
 
 const RouteLogin = () => {
     const [email, setEmail] = useState<string>("");
