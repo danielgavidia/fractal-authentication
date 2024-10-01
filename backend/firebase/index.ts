@@ -1,5 +1,6 @@
 import express from "express";
 import { verifyFirebaseToken } from "./middleware";
+import prisma from "../prisma/prisma";
 
 // Express setup
 const app = express();
@@ -24,8 +25,22 @@ app.post("/authenticate", verifyFirebaseToken, (req, res) => {
 });
 
 // log in
-app.post("/login", verifyFirebaseToken, (req, res) => {
+app.post("/login", verifyFirebaseToken, async (req, res) => {
     const firebaseId = req.body.firebaseId;
+    const user = await prisma.user.findUnique({
+        where: {
+            firebaseId: firebaseId,
+        },
+    });
+    if (!user) {
+        const userNew = await prisma.user.create({
+            data: {
+                firebaseId: firebaseId,
+            },
+        });
+        res.status(200).json(userNew);
+    }
+    res.status(200).json(user);
 });
 
 // sign up
