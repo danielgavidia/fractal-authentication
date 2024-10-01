@@ -1,5 +1,6 @@
 import express from "express";
-import admin from "firebase-admin";
+import { verifyFirebaseToken } from "./middleware";
+import prisma from "../prisma/prisma";
 
 // Express setup
 const app = express();
@@ -12,28 +13,34 @@ app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
-// Firebase setup
-const serviceAccount = require("./credentials.json");
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-});
-
 // app
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
-app.post("/authenticate", async (req, res) => {
-    const idToken = req.headers.authorization?.split("Bearer ")[1];
-    if (!idToken) {
-        res.status(401).send("No token provided");
-        return;
-    }
-    try {
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
-        res.status(200).send(decodedToken);
-    } catch (error) {
-        res.status(400).send("Unauthorized: " + error);
-    }
-    res.send("Test");
+// authenticate
+app.post("/authenticate", verifyFirebaseToken, (req, res) => {
+    const firebaseId = req.body.firebaseId;
+    res.status(200).json({ firebaseId: firebaseId });
 });
+
+// log in
+app.post("/login", verifyFirebaseToken, async (req, res) => {
+    const firebaseId = req.body.firebaseId;
+    const user = await prisma.user.findUnique({
+        where: {
+            firebaseId: firebaseId,
+        },
+    });
+    if (!user) {
+        const userNew = await prisma.user.create({
+            data: {
+                firebaseId: firebaseId,
+            },
+        });
+        res.status(200).json(userNew);
+    }
+    res.status(200).json(user);
+});
+
+// sign up

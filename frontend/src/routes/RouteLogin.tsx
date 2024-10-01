@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import axios from "axios";
+import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig"
@@ -16,7 +16,18 @@ const RouteLogin = () => {
         e.preventDefault()
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
-            console.log("User signed in: ", userCredential.user)
+            const token = await userCredential.user.getIdToken()
+            console.log(token)
+            const res = await axios({
+                method: "POST",
+                url: "http://localhost:4000/login",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            // console.log("User signed in: ", userCredential.user)
+            console.log("success")
+            console.log(res)
         } catch (error: any) {
             setError(error.message)
         }
